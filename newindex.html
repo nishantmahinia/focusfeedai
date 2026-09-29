@@ -1,0 +1,1450 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+  <title>FocusFeed AI - Anti-Addiction Prototype</title>
+  <!-- Tailwind CSS CDN with plugins -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <!-- Google Fonts: Poppins -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap"
+    rel="stylesheet">
+  <!-- Phosphor Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <link rel="stylesheet" type="text/css"
+    href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css">
+  <link rel="stylesheet" type="text/css"
+    href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/thin/style.css">
+  <link rel="stylesheet" type="text/css"
+    href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/light/style.css">
+  <link rel="stylesheet" type="text/css"
+    href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/bold/style.css">
+  <link rel="stylesheet" type="text/css"
+    href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/fill/style.css">
+  <link rel="stylesheet" type="text/css"
+    href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/duotone/style.css">
+  <link href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css" rel="stylesheet"
+    type="text/css">
+  <link href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/thin/style.css" rel="stylesheet"
+    type="text/css">
+  <link href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/light/style.css" rel="stylesheet"
+    type="text/css">
+  <link href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/bold/style.css" rel="stylesheet"
+    type="text/css">
+  <link href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/fill/style.css" rel="stylesheet"
+    type="text/css">
+  <link href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/duotone/style.css" rel="stylesheet"
+    type="text/css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            poppins: ['Poppins', 'sans-serif'],
+          },
+          colors: {
+            cream: '#FDFBF7',
+            sage: {
+              50: '#F2F7F4',
+              100: '#E2EDE5',
+              200: '#C7DDCF',
+              500: '#4A7C59',
+              600: '#3D684A',
+              700: '#30523A'
+            },
+            amber: {
+              50: '#FFFDF9',
+              100: '#FEF3E2',
+              200: '#FDE4C2',
+              500: '#E09F3E',
+              600: '#C7872A'
+            },
+            charcoal: {
+              400: '#64748B',
+              600: '#475569',
+              800: '#2C3E50',
+              900: '#1E293B'
+            },
+            sand: '#F7F4EC'
+          },
+          boxShadow: {
+            'cozy': '0 4px 20px -2px rgba(44, 62, 80, 0.05), 0 2px 6px -1px rgba(44, 62, 80, 0.03)',
+            'cozy-lg': '0 12px 28px -4px rgba(74, 124, 89, 0.12), 0 4px 10px -2px rgba(44, 62, 80, 0.04)',
+            'glow-sage': '0 0 20px rgba(74, 124, 89, 0.25)',
+          },
+          borderRadius: {
+            '3xl': '1.75rem',
+            '4xl': '2.25rem'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #ECE7DE;
+      color: #2C3E50;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    /* Mobile frame mockup simulation */
+    .mobile-screen-container {
+      width: 100%;
+      max-width: 412px;
+      min-height: 860px;
+      height: 92vh;
+      max-height: 890px;
+      border-radius: 40px;
+      box-shadow: 0 25px 60px -15px rgba(44, 62, 80, 0.2), 0 0 0 10px #1E293B, 0 0 0 12px #94A3B8;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      background-color: #FDFBF7;
+    }
+
+    /* Hide scrollbars */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* Spring micro-interactions */
+    .spring-press:active {
+      transform: scale(0.96);
+      transition: transform 0.12s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .toggle-checkbox:checked+.toggle-bg {
+      background-color: #4A7C59;
+    }
+
+    .toggle-checkbox:checked+.toggle-bg .toggle-dot {
+      transform: translateX(18px);
+    }
+
+    /* Screen transition container */
+    .view-screen {
+      transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes cozyPulse {
+
+      0%,
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+
+      50% {
+        transform: scale(1.08);
+        opacity: 0.85;
+      }
+    }
+
+    .animate-cozy-pulse {
+      animation: cozyPulse 2.5s infinite ease-in-out;
+    }
+  </style>
+</head>
+
+<body class="min-h-screen flex items-center justify-center p-2 sm:p-6 bg-[#E8E2D7]">
+  <!-- Outer Mobile Device Frame -->
+  <div class="mobile-screen-container shadow-2xl flex flex-col justify-between">
+    <!-- iPhone-style Dynamic Notch & Status Bar -->
+    <div class="pt-3 px-6 pb-1 flex justify-between items-center z-50 bg-[#FDFBF7]/90 backdrop-blur-md">
+      <span class="text-xs font-semibold text-charcoal-800 tracking-tight" id="status-clock">23:14</span>
+      <div class="flex items-center space-x-1.5 text-charcoal-800">
+        <i class="ph-bold ph-wifi-high text-xs"></i>
+        <i class="ph-bold ph-battery-charging text-sm text-sage-500"></i>
+      </div>
+    </div>
+    <!-- MAIN APP VIEWPORT (Contains 4 Switchable Views) -->
+    <main class="flex-1 relative overflow-hidden flex flex-col">
+      <!-- ============================================== -->
+      <!-- SCREEN 1: DASHBOARD (HOME SCREEN) -->
+      <!-- ============================================== -->
+      <div class="view-screen flex-1 flex flex-col overflow-y-auto no-scrollbar px-5 pt-3 pb-24" id="screen-dashboard">
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-6 pt-1">
+          <div>
+            <h1 class="text-3xl font-bold text-charcoal-900 tracking-tight">FocusFeed AI</h1>
+          </div>
+          <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-sm"></div>
+        </div>
+        <!-- Avatar Evolution Status Bar Component -->
+
+        <!-- Time Saved Tracker Card (Gamified Progress Component) -->
+
+        <!-- 🔥 SMART REELS ACCESS CARD (Daily Reel Budget = 5) -->
+        <div class="bg-white rounded-3xl p-5 border border-sand shadow-cozy mb-2">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center space-x-2">
+              <div class="w-8 h-8 rounded-xl bg-sage-100 text-sage-600 flex items-center justify-center"><i
+                  class="ph-fill ph-sparkle text-base"></i></div>
+              <h3 class="text-sm font-bold text-charcoal-900">Daily AI Brief</h3>
+            </div><span class="text-xs text-charcoal-400 font-mono">22:00</span>
+          </div>
+          <div class="space-y-2.5">
+            <div class="flex items-center justify-between bg-sand/50 rounded-2xl px-3.5 py-2.5"><span
+                class="text-xs font-semibold text-charcoal-800 flex items-center gap-2"><i
+                  class="ph-bold ph-graduation-cap text-sage-600 text-sm"></i> 3 urgent study queries
+                flagged</span><span class="text-xs font-bold text-sage-600">Ready</span></div>
+            <div class="flex items-center justify-between bg-sand/50 rounded-2xl px-3.5 py-2.5"><span
+                class="text-xs font-semibold text-charcoal-800 flex items-center gap-2"><i
+                  class="ph-bold ph-prohibit text-rose-500 text-sm"></i> 42 viral clips filtered cleanly</span><span
+                class="text-xs font-bold text-charcoal-400">Shielded</span></div>
+          </div>
+        </div>
+        <!-- Connected Platforms Section with App Customization Button -->
+        <div class="mb-4">
+          <div class="flex items-center justify-between mb-2.5">
+            <div class="flex items-center gap-2">
+              <h2 class="text-base font-bold text-charcoal-900 tracking-tight">Sanitized Socials</h2>
+              <span class="bg-amber-100 text-amber-600 text-[10px] font-bold px-2 py-0.5 rounded-full"
+                id="active-app-count">4 active</span>
+            </div>
+            <!-- Customize Active Apps Trigger -->
+            <button class="text-[11px] text-sage-600 font-semibold hover:underline flex items-center gap-1 spring-press"
+              onclick="openAppSelectorModal()">
+              <i class="ph-bold ph-sliders-horizontal text-xs"></i> Customize Apps
+            </button>
+          </div>
+          <!-- Dynamic Active Apps Grid (Without toggles, clean & interactive) -->
+          <div class="grid grid-cols-2 gap-3" id="active-apps-container">
+            <div
+              class="app-feed-card bg-white rounded-3xl p-4 border border-sand shadow-cozy hover:border-sage-200 transition-all cursor-pointer spring-press group"
+              data-app-id="instagram" onclick="navigateTo('screen-inbox')">
+              <div class="flex items-center justify-between mb-3">
+                <div
+                  class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 flex items-center justify-center text-white shadow-sm">
+                  <i class="ph-bold ph-instagram-logo text-xl"></i></div><span
+                  class="bg-rose-50 border border-rose-200 text-rose-600 text-xs font-bold px-2 py-0.5 rounded-full">4
+                  direct</span>
+              </div>
+              <h3 class="text-sm font-bold text-charcoal-900 group-hover:text-sage-600 transition-colors mb-1">Instagram
+              </h3>
+              <p class="text-xs text-sage-600 font-semibold flex items-center gap-1 mt-3">Open inbox <i
+                  class="ph-bold ph-arrow-right text-xs"></i></p>
+            </div>
+            <div
+              class="app-feed-card bg-white rounded-3xl p-4 border border-sand shadow-cozy hover:border-sage-200 transition-all cursor-pointer spring-press group"
+              data-app-id="youtube" onclick="triggerToast('YouTube Shorts sanitized: 2 academic reminders awaiting.')">
+              <div class="flex items-center justify-between mb-3">
+                <div class="w-10 h-10 rounded-2xl bg-red-600 flex items-center justify-center text-white shadow-sm"><i
+                    class="ph-bold ph-youtube-logo text-xl"></i></div><span
+                  class="bg-amber-50 border border-amber-200 text-amber-700 text-xs font-bold px-2 py-0.5 rounded-full">2
+                  study</span>
+              </div>
+              <h3 class="text-sm font-bold text-charcoal-900 group-hover:text-sage-600 transition-colors mb-1">YouTube
+              </h3>
+              <p class="text-xs text-sage-600 font-semibold flex items-center gap-1 mt-3">Study DMs <i
+                  class="ph-bold ph-arrow-right text-xs"></i></p>
+            </div>
+            <div
+              class="app-feed-card bg-white rounded-3xl p-4 border border-sand shadow-cozy hover:border-sage-200 transition-all cursor-pointer spring-press group"
+              data-app-id="snapchat" onclick="triggerToast('Snapchat Spotlight feed stripped out.')">
+              <div class="flex items-center justify-between mb-3">
+                <div
+                  class="w-10 h-10 rounded-2xl bg-amber-400 flex items-center justify-center text-charcoal-900 shadow-sm">
+                  <i class="ph-bold ph-snapchat-logo text-xl"></i></div><span
+                  class="bg-sage-50 border border-sage-200 text-sage-700 text-xs font-bold px-2 py-0.5 rounded-full">1
+                  direct</span>
+              </div>
+              <h3 class="text-sm font-bold text-charcoal-900 group-hover:text-sage-600 transition-colors mb-1">Snapchat
+              </h3>
+              <p class="text-xs text-sage-600 font-semibold flex items-center gap-1 mt-3">Direct chat <i
+                  class="ph-bold ph-arrow-right text-xs"></i></p>
+            </div>
+            <div
+              class="app-feed-card bg-white rounded-3xl p-4 border border-sand shadow-cozy hover:border-sage-200 transition-all cursor-pointer spring-press group"
+              data-app-id="facebook" onclick="triggerToast('Facebook Newsfeed replaced with Group DM thread.')">
+              <div class="flex items-center justify-between mb-3">
+                <div class="w-10 h-10 rounded-2xl bg-blue-600 flex items-center justify-center text-white shadow-sm"><i
+                    class="ph-bold ph-facebook-logo text-xl"></i></div><span
+                  class="bg-slate-100 border border-slate-200 text-slate-700 text-xs font-bold px-2 py-0.5 rounded-full">3
+                  alerts</span>
+              </div>
+              <h3 class="text-sm font-bold text-charcoal-900 group-hover:text-sage-600 transition-colors mb-1">Facebook
+              </h3>
+              <p class="text-xs text-sage-600 font-semibold flex items-center gap-1 mt-3">Study groups <i
+                  class="ph-bold ph-arrow-right text-xs"></i></p>
+            </div>
+          </div>
+        </div>
+        <!-- Quick Access Banner to Focus Inbox -->
+        <div
+          class="bg-gradient-to-r from-sage-500 to-sage-600 rounded-3xl p-5 text-white shadow-cozy-lg flex items-center justify-between cursor-pointer spring-press mb-6"
+          onclick="navigateTo('screen-inbox')">
+          <div class="flex items-center space-x-3.5">
+            <div class="w-11 h-11 rounded-2xl bg-white/15 backdrop-blur-sm flex items-center justify-center text-white">
+              <i class="ph-fill ph-tray text-2xl"></i></div>
+            <div>
+              <h4 class="text-base font-bold leading-tight">Open INBOX</h4>
+              <p class="text-xs text-white/80 mt-0.5">Direct messages only • Zero feeds</p>
+            </div>
+          </div>
+          <div class="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center text-white"><i
+              class="ph-bold ph-arrow-right text-base"></i></div>
+        </div>
+        <!-- 🌟 DAILY AI BRIEF CARD (Replaces old Gemini filter card) -->
+        <div class="bg-white rounded-3xl p-5 border border-sand shadow-cozy mb-2">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center space-x-2">
+              <div class="w-8 h-8 rounded-xl bg-sage-100 text-sage-600 flex items-center justify-center"><i
+                  class="ph-fill ph-sparkle text-base"></i></div>
+              <h3 class="text-sm font-bold text-charcoal-900">Daily AI Brief</h3>
+            </div><span class="text-xs text-charcoal-400 font-mono">22:00</span>
+          </div>
+          <div class="space-y-2.5">
+            <div class="flex items-center justify-between bg-sand/50 rounded-2xl px-3.5 py-2.5"><span
+                class="text-xs font-semibold text-charcoal-800 flex items-center gap-2"><i
+                  class="ph-bold ph-graduation-cap text-sage-600 text-sm"></i> 3 urgent study queries
+                flagged</span><span class="text-xs font-bold text-sage-600">Ready</span></div>
+            <div class="flex items-center justify-between bg-sand/50 rounded-2xl px-3.5 py-2.5"><span
+                class="text-xs font-semibold text-charcoal-800 flex items-center gap-2"><i
+                  class="ph-bold ph-prohibit text-rose-500 text-sm"></i> 42 viral clips filtered cleanly</span><span
+                class="text-xs font-bold text-charcoal-400">Shielded</span></div>
+          </div>
+        </div>
+      </div>
+      <!-- ============================================== -->
+      <!-- SCREEN 2: FOCUS INBOX (APP INTEGRATION VIEW) -->
+      <!-- ============================================== -->
+      <div class="view-screen hidden flex-1 flex flex-col overflow-y-auto no-scrollbar px-5 pt-3 pb-24"
+        id="screen-inbox">
+        <!-- Top Bar with Back Navigation & App Brand -->
+        <div class="flex items-center justify-between mb-3">
+          <button
+            class="w-9 h-9 rounded-2xl bg-white border border-sand flex items-center justify-center text-charcoal-800 shadow-sm spring-press"
+            onclick="navigateTo('screen-dashboard')">
+            <i class="ph-bold ph-caret-left text-lg"></i>
+          </button>
+          <div class="flex items-center space-x-2">
+            <div
+              class="w-6 h-6 rounded-lg bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 flex items-center justify-center text-white text-xs">
+              <i class="ph-bold ph-instagram-logo"></i>
+            </div>
+            <div class="text-center">
+              <h2 class="text-sm font-bold text-charcoal-900">INBOX</h2>
+              <p class="text-[9px] text-sage-600 font-medium">Reels &amp; Explore Stripped</p>
+            </div>
+          </div>
+          <button
+            class="w-9 h-9 rounded-2xl bg-white border border-sand flex items-center justify-center text-charcoal-800 shadow-sm spring-press"
+            onclick="triggerToast('Filtered: Showing verified contacts only')" title="Filter Tag">
+            <i class="ph-bold ph-funnel text-base"></i>
+          </button>
+        </div>
+        <!-- AI Sanitizer Notice Pill -->
+        <div class="bg-amber-100/70 border border-amber-200/80 rounded-2xl p-2.5 mb-3.5 flex items-center space-x-2.5">
+          <i class="ph-fill ph-sparkle text-amber-600 text-base flex-shrink-0"></i>
+          <p class="text-[10px] text-charcoal-800 font-medium leading-tight">
+            <strong class="font-bold text-amber-700">Blocked Noise:</strong> Infinite explore feeds &amp; video autoplay
+            were quarantined by Gemini AI. Only verified human contacts shown.
+          </p>
+        </div>
+        <!-- Filter Category Tabs -->
+        <div class="flex items-center space-x-1.5 overflow-x-auto no-scrollbar pb-1 mb-3">
+          <button class="filter-chip px-3 py-1 rounded-full text-[11px] font-semibold bg-sage-500 text-white shadow-sm"
+            onclick="setStreamFilter('all', this)">All (4)</button>
+          <button
+            class="filter-chip px-3 py-1 rounded-full text-[11px] font-medium bg-white text-charcoal-600 border border-sand"
+            onclick="setStreamFilter('important', this)">Important</button>
+          <button
+            class="filter-chip px-3 py-1 rounded-full text-[11px] font-medium bg-white text-charcoal-600 border border-sand"
+            onclick="setStreamFilter('learning', this)">Learning</button>
+          <button
+            class="filter-chip px-3 py-1 rounded-full text-[11px] font-medium bg-white text-charcoal-600 border border-sand"
+            onclick="setStreamFilter('social', this)">Social</button>
+        </div>
+        <!-- AI-Classified Stream (List of direct messages & class notes) -->
+        <div class="space-x-0 space-y-2.5 flex-1" id="inbox-card-list">
+          <!-- Card 1: Rahul Sharma -->
+          <div
+            class="inbox-card bg-white rounded-3xl p-4 border border-sand shadow-cozy hover:border-sage-300 transition-all cursor-pointer spring-press relative"
+            data-category="social"
+            onclick="openDeepLinkChat('Rahul Sharma', 'Hey, did you finish the math assignment module 3? Check this reel breakdown I sent!', 'Social', '12m ago', 'R')">
+            <div class="flex items-start justify-between">
+              <div class="flex items-start space-x-3">
+                <div class="relative flex-shrink-0">
+                  <div
+                    class="w-11 h-11 rounded-2xl bg-amber-100 text-amber-700 font-bold flex items-center justify-center text-sm shadow-inner">
+                    R</div>
+                  <div
+                    class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 flex items-center justify-center text-white text-[10px] shadow-sm border border-white">
+                    <i class="ph-bold ph-instagram-logo"></i>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex items-center space-x-2">
+                    <h3 class="text-xs font-bold text-charcoal-800">Rahul Sharma</h3>
+                    <span
+                      class="bg-rose-50 text-rose-600 text-[9px] font-bold px-2 py-0.5 rounded-full border border-rose-100">Instagram
+                      DM</span>
+                  </div>
+                  <p class="text-[10px] text-sage-600 font-medium mt-0.5">Sent a Reel breakdown + message</p>
+                  <p class="text-xs text-charcoal-600 mt-1 line-clamp-1 font-normal">"Hey, did you finish the math
+                    assignment module 3?..."</p>
+                </div>
+              </div>
+              <div class="text-right flex flex-col items-end">
+                <span class="text-[10px] text-charcoal-400 font-medium">12m ago</span>
+                <span class="w-2 h-2 rounded-full bg-sage-500 mt-1.5"></span>
+              </div>
+            </div>
+            <div class="mt-3 pt-2 border-t border-sand flex items-center justify-between text-[10px]">
+              <span class="text-sage-600 font-semibold flex items-center gap-1">
+                <i class="ph-bold ph-lock-key"></i> Direct Video Sandbox (Feed Locked)
+              </span>
+              <span class="text-charcoal-500 font-medium">Open Thread →</span>
+            </div>
+          </div>
+          <!-- Card 2: Arjuna Academy -->
+          <div
+            class="inbox-card bg-white rounded-3xl p-4 border border-sand shadow-cozy hover:border-sage-300 transition-all cursor-pointer spring-press relative"
+            data-category="learning"
+            onclick="openDeepLinkChat('Arjuna Academy', 'Class rescheduled to 4:00 PM today. Watch the 2-minute review clip before class.', 'Learning', '45m ago', 'AA')">
+            <div class="flex items-start justify-between">
+              <div class="flex items-start space-x-3">
+                <div class="relative flex-shrink-0">
+                  <div
+                    class="w-11 h-11 rounded-2xl bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center text-xs shadow-inner">
+                    AA</div>
+                  <div
+                    class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-red-600 flex items-center justify-center text-white text-[10px] shadow-sm border border-white">
+                    <i class="ph-bold ph-youtube-logo"></i>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex items-center space-x-2">
+                    <h3 class="text-xs font-bold text-charcoal-800">Arjuna Academy</h3>
+                    <span
+                      class="bg-red-50 text-red-600 text-[9px] font-bold px-2 py-0.5 rounded-full border border-red-100">YouTube
+                      Notice</span>
+                  </div>
+                  <p class="text-[10px] text-sage-600 font-medium mt-0.5">Academic Video Attachment</p>
+                  <p class="text-xs text-charcoal-600 mt-1 line-clamp-1 font-normal">"Class rescheduled to 4:00 PM
+                    today. Watch..."</p>
+                </div>
+              </div>
+              <div class="text-right flex flex-col items-end">
+                <span class="text-[10px] text-charcoal-400 font-medium">45m ago</span>
+                <span class="w-2 h-2 rounded-full bg-sage-500 mt-1.5"></span>
+              </div>
+            </div>
+            <div class="mt-3 pt-2 border-t border-sand flex items-center justify-between text-[10px]">
+              <span class="text-sage-600 font-semibold flex items-center gap-1">
+                <i class="ph-bold ph-graduation-cap"></i> Verified Academic Alert
+              </span>
+              <span class="text-charcoal-500 font-medium">View Notice →</span>
+            </div>
+          </div>
+          <!-- Card 3: ABC Classes Admin -->
+          <div
+            class="inbox-card bg-white rounded-3xl p-4 border border-sand shadow-cozy hover:border-sage-300 transition-all cursor-pointer spring-press relative"
+            data-category="important"
+            onclick="openDeepLinkChat('ABC Classes Admin', 'Mock Exam Test results are live on portal. Discussion thread available here.', 'Important', '2h ago', 'ABC')">
+            <div class="flex items-start justify-between">
+              <div class="flex items-start space-x-3">
+                <div class="relative flex-shrink-0">
+                  <div
+                    class="w-11 h-11 rounded-2xl bg-blue-50 text-blue-700 font-bold flex items-center justify-center text-xs shadow-inner">
+                    ABC</div>
+                  <div
+                    class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-blue-600 flex items-center justify-center text-white text-[10px] shadow-sm border border-white">
+                    <i class="ph-bold ph-facebook-logo"></i>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex items-center space-x-2">
+                    <h3 class="text-xs font-bold text-charcoal-800">ABC Classes Admin</h3>
+                    <span
+                      class="bg-blue-50 text-blue-700 text-[9px] font-bold px-2 py-0.5 rounded-full border border-blue-100">Facebook
+                      Group</span>
+                  </div>
+                  <p class="text-[10px] text-sage-600 font-medium mt-0.5">Official Circular</p>
+                  <p class="text-xs text-charcoal-600 mt-1 line-clamp-1 font-normal">"Mock Exam Test results are live on
+                    portal..."</p>
+                </div>
+              </div>
+              <div class="text-right flex flex-col items-end">
+                <span class="text-[10px] text-charcoal-400 font-medium">2h ago</span>
+              </div>
+            </div>
+            <div class="mt-3 pt-2 border-t border-sand flex items-center justify-between text-[10px]">
+              <span class="text-sage-600 font-semibold flex items-center gap-1">
+                <i class="ph-bold ph-seal-check"></i> High Priority Bulletin
+              </span>
+              <span class="text-charcoal-500 font-medium">Read Thread →</span>
+            </div>
+          </div>
+          <!-- Card 4: Nishant Patel -->
+          <div
+            class="inbox-card bg-white rounded-3xl p-4 border border-sand shadow-cozy hover:border-sage-300 transition-all cursor-pointer spring-press relative"
+            data-category="social"
+            onclick="openDeepLinkChat('Nishant Patel', 'Are we playing badminton tomorrow at 6 AM? Quick check so I reserve the court.', 'Social', '3h ago', 'NP')">
+            <div class="flex items-start justify-between">
+              <div class="flex items-start space-x-3">
+                <div class="relative flex-shrink-0">
+                  <div
+                    class="w-11 h-11 rounded-2xl bg-amber-50 text-amber-800 font-bold flex items-center justify-center text-sm shadow-inner">
+                    NP</div>
+                  <div
+                    class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-amber-400 flex items-center justify-center text-charcoal-900 text-[10px] shadow-sm border border-white">
+                    <i class="ph-bold ph-snapchat-logo"></i>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex items-center space-x-2">
+                    <h3 class="text-xs font-bold text-charcoal-800">Nishant Patel</h3>
+                    <span
+                      class="bg-amber-50 text-amber-700 text-[9px] font-bold px-2 py-0.5 rounded-full border border-amber-200">Snap
+                      Chat</span>
+                  </div>
+                  <p class="text-[10px] text-sage-600 font-medium mt-0.5">Direct Chat (Spotlight Blocked)</p>
+                  <p class="text-xs text-charcoal-600 mt-1 line-clamp-1 font-normal">"Are we playing badminton tomorrow
+                    at 6 AM?..."</p>
+                </div>
+              </div>
+              <div class="text-right flex flex-col items-end">
+                <span class="text-[10px] text-charcoal-400 font-medium">3h ago</span>
+              </div>
+            </div>
+            <div class="mt-3 pt-2 border-t border-sand flex items-center justify-between text-[10px]">
+              <span class="text-sage-600 font-semibold flex items-center gap-1">
+                <i class="ph-bold ph-shield"></i> Safe Sandbox DM
+              </span>
+              <span class="text-charcoal-500 font-medium">Chat →</span>
+            </div>
+          </div>
+        </div>
+        <!-- Empty State Container -->
+        <div class="hidden flex-col items-center justify-center py-10 px-4 text-center" id="inbox-empty-state">
+          <div class="w-16 h-16 rounded-full bg-sage-100 flex items-center justify-center text-sage-600 mb-3">
+            <i class="ph-fill ph-sparkle text-3xl"></i>
+          </div>
+          <h3 class="text-sm font-bold text-charcoal-800">Clean Slate Achieved!</h3>
+          <p class="text-xs text-charcoal-400 mt-1 max-w-[200px]">
+            All distractions cleared. Enjoy your undisturbed quiet time.
+          </p>
+          <button class="mt-4 px-4 py-1.5 rounded-full bg-sage-500 text-white text-xs font-semibold spring-press"
+            onclick="setStreamFilter('all', document.querySelector('.filter-chip'))">
+            Reset Filters
+          </button>
+        </div>
+      </div>
+      <!-- ============================================== -->
+      <!-- SCREEN 3: DIRECT MESSAGE DEEP-LINK & FOCUS LOCK -->
+      <!-- ============================================== -->
+      <div class="view-screen hidden flex-1 flex flex-col overflow-hidden bg-[#FAF8F5]" id="screen-chat-lock">
+        <!-- Header status pill -->
+        <div class="bg-charcoal-900 text-white px-4 py-2 flex items-center justify-between text-[11px] shadow-sm">
+          <div class="flex items-center space-x-2">
+            <span class="w-2 h-2 rounded-full bg-sage-500 animate-ping"></span>
+            <span class="font-semibold tracking-wide flex items-center gap-1">
+              <i class="ph-bold ph-shield-check text-sage-400"></i> NO-ESCAPE BARRIER ACTIVE
+            </span>
+          </div>
+          <span class="text-[9px] bg-charcoal-800 text-charcoal-400 px-2 py-0.5 rounded font-mono">FEEDS BLOCKED</span>
+        </div>
+        <!-- Active Chat Profile Header -->
+        <div class="bg-white border-b border-sand px-4 py-3 flex items-center justify-between shadow-sm">
+          <div class="flex items-center space-x-3">
+            <button
+              class="w-8 h-8 rounded-xl bg-sand/80 flex items-center justify-center text-charcoal-800 spring-press"
+              onclick="navigateTo('screen-inbox')" title="Return to Safe Inbox">
+              <i class="ph-bold ph-arrow-left text-base"></i>
+            </button>
+            <div class="relative flex-shrink-0">
+              <div
+                class="w-9 h-9 rounded-2xl bg-amber-100 text-amber-700 font-bold flex items-center justify-center text-sm shadow-inner"
+                id="chat-sender-avatar">R</div>
+              <div
+                class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 flex items-center justify-center text-white text-[8px] border border-white"
+                id="chat-app-icon-badge">
+                <i class="ph-bold ph-instagram-logo" id="chat-app-icon"></i>
+              </div>
+            </div>
+            <div>
+              <div class="flex items-center space-x-1.5">
+                <h3 class="text-xs font-bold text-charcoal-800" id="chat-sender-name">Rahul Sharma</h3>
+                <span
+                  class="text-[9px] px-1.5 py-0.5 rounded font-semibold bg-rose-50 text-rose-600 border border-rose-100"
+                  id="chat-app-tag">Instagram DM</span>
+              </div>
+              <p class="text-[10px] text-sage-600 font-medium" id="chat-sender-status">Direct Thread Only • Sandboxed
+              </p>
+            </div>
+          </div>
+          <button
+            class="px-2.5 py-1 rounded-xl bg-sand hover:bg-rose-50 border border-sand text-charcoal-600 hover:text-rose-600 text-[10px] font-bold flex items-center gap-1 spring-press"
+            onclick="attemptEscapeToFeed()">
+            <i class="ph-bold ph-prohibit"></i> Tap Feed
+          </button>
+        </div>
+        <!-- Smart Reels Sandbox Info Pill -->
+        <div class="px-4 pt-2.5">
+          <div
+            class="bg-sage-50 border border-sage-200/80 rounded-2xl px-3 py-2 flex items-center justify-between text-[10px]">
+            <div class="flex items-center space-x-2 text-sage-800">
+              <i class="ph-bold ph-shield text-sm text-sage-600"></i>
+              <span class="">Smart Reels Sandbox • Daily Budget: <strong class="font-bold text-charcoal-800"
+                  id="chat-budget-indicator">3/5 Used</strong></span>
+            </div>
+            <button class="font-bold text-sage-700 underline"
+              onclick="triggerToast('Reel plays right here without autoplay traps.')">Info</button>
+          </div>
+        </div>
+        <!-- Chat Conversation Area -->
+        <div class="flex-1 overflow-y-auto no-scrollbar px-4 space-y-3 pb-4 pt-2" id="chat-conversation-area">
+          <div class="text-center my-1">
+            <span class="text-[10px] text-charcoal-400 bg-sand/60 px-2.5 py-0.5 rounded-full font-medium">Today 09:28
+              AM</span>
+          </div>
+          <div class="flex items-start space-x-2 max-w-[88%]">
+            <div
+              class="w-6 h-6 rounded-lg bg-amber-100 text-amber-700 text-[10px] font-bold flex items-center justify-center flex-shrink-0 mt-1"
+              id="chat-mini-avatar">R</div>
+            <div
+              class="bg-white rounded-3xl rounded-tl-sm p-3.5 border border-sand shadow-cozy text-xs text-charcoal-800 leading-relaxed"
+              id="chat-message-body">
+              Hey, did you finish the math assignment module 3? Check this reel breakdown I sent!
+            </div>
+          </div>
+          <!-- Sandboxed Video Clip Container (Respects Smart Reels Budget) -->
+          <div class="ml-8 max-w-[85%]" id="chat-reel-container">
+            <div class="bg-white rounded-2xl border border-sand overflow-hidden shadow-cozy">
+              <div
+                class="relative bg-charcoal-900 h-28 flex items-center justify-center overflow-hidden cursor-pointer group"
+                onclick="playSandboxedReel()">
+                <div class="absolute inset-0 bg-gradient-to-t from-charcoal-900/80 to-transparent z-10"></div>
+                <div
+                  class="absolute top-2 left-2 z-20 flex items-center space-x-1.5 bg-black/50 backdrop-blur-sm px-2 py-0.5 rounded-full text-[9px] text-white">
+                  <i class="ph-bold ph-film-strip text-amber-400"></i>
+                  <span class="">Smart Reel (Budget Protected)</span>
+                </div>
+                <div
+                  class="absolute top-2 right-2 z-20 bg-sage-500/90 text-white text-[8px] font-bold px-1.5 py-0.5 rounded">
+                  NO FEED ESCAPE</div>
+                <button
+                  class="w-10 h-10 rounded-full bg-white/90 text-charcoal-900 flex items-center justify-center z-20 shadow-lg group-hover:scale-110 transition-transform"
+                  id="reel-play-btn">
+                  <i class="ph-fill ph-play text-base text-charcoal-900"></i>
+                </button>
+                <div
+                  class="absolute bottom-2 left-2 right-2 z-20 flex items-center justify-between text-[10px] text-white">
+                  <span class="truncate font-medium">Calculus Theorem in 60s</span>
+                  <span class="text-white/70 font-mono text-[9px]">0:45</span>
+                </div>
+              </div>
+              <div class="p-2.5 bg-sand/30 flex items-center justify-between text-[10px]">
+                <div class="flex items-center space-x-1 text-charcoal-600">
+                  <i class="ph-bold ph-check-circle text-sage-600"></i>
+                  <span class="">Plays safely inside chat • 0 algorithmic traps</span>
+                </div>
+                <button class="text-charcoal-400 hover:text-rose-600 font-semibold"
+                  onclick="attemptEscapeToFeed()">Watch on IG ✕</button>
+              </div>
+            </div>
+          </div>
+          <div class="flex items-end justify-end space-x-2 ml-auto max-w-[85%] pt-2">
+            <div class="bg-sage-500 text-white rounded-3xl rounded-tr-sm p-3.5 shadow-cozy text-xs leading-relaxed">
+              Watched it right here! Saved me from doomscrolling. Notes attached.
+            </div>
+          </div>
+          <div id="dynamic-replies"></div>
+        </div>
+        <!-- Chat Input Bar -->
+        <div class="p-3 bg-white border-t border-sand">
+          <div class="flex items-center space-x-1.5 overflow-x-auto no-scrollbar pb-2">
+            <button class="px-2.5 py-1 rounded-full bg-sand text-charcoal-600 text-[10px] font-medium spring-press"
+              onclick="sendQuickReply('Got the notes, thank you!')">Got the notes, thank you!</button>
+            <button class="px-2.5 py-1 rounded-full bg-sand text-charcoal-600 text-[10px] font-medium spring-press"
+              onclick="sendQuickReply('Let us review at 4 PM.')">Let us review at 4 PM</button>
+            <button class="px-2.5 py-1 rounded-full bg-sand text-charcoal-600 text-[10px] font-medium spring-press"
+              onclick="sendQuickReply('Awesome clip, super helpful!')">Awesome clip</button>
+          </div>
+          <form class="flex items-center space-x-2" onsubmit="handleSendMessage(event)">
+            <button
+              class="w-9 h-9 rounded-2xl bg-sand/80 text-charcoal-600 flex items-center justify-center spring-press"
+              onclick="triggerToast('Attachment locked to local notes (no feed access).')" type="button">
+              <i class="ph-bold ph-paperclip text-base"></i>
+            </button>
+            <input
+              class="flex-1 bg-sand/50 rounded-2xl px-3.5 py-2 text-xs text-charcoal-800 placeholder-charcoal-400 focus:outline-none focus:ring-1 focus:ring-sage-500"
+              id="chat-input" placeholder="Type direct reply..." type="text">
+            <button
+              class="w-9 h-9 rounded-2xl bg-sage-500 text-white flex items-center justify-center shadow-md spring-press"
+              type="submit">
+              <i class="ph-bold ph-paper-plane-right text-base"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+      <!-- ============================================== -->
+      <!-- SCREEN 4: SETTINGS & ANTI-ADDICTION CONTROLS -->
+      <!-- ============================================== -->
+      <div class="view-screen hidden flex-1 flex flex-col overflow-y-auto no-scrollbar px-5 pt-3 pb-24"
+        id="screen-settings">
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h1 class="text-2xl font-bold text-charcoal-800 tracking-tight">Settings</h1>
+            <p class="text-xs text-charcoal-400 font-medium">Anti-Addiction Rules &amp; Controls</p>
+          </div>
+          <button
+            class="w-9 h-9 rounded-2xl bg-white border border-sand flex items-center justify-center text-sage-600 shadow-sm spring-press"
+            onclick="triggerToast('All rules saved to neural shield')" title="Saved">
+            <i class="ph-bold ph-check text-base font-bold"></i>
+          </button>
+        </div>
+        <!-- Section 1: Global Protection -->
+        <div class="bg-white rounded-3xl p-4 border border-sand shadow-cozy mb-4">
+          <h2 class="text-xs font-bold text-charcoal-800 mb-3 flex items-center gap-1.5">
+            <i class="ph-bold ph-shield-check text-sage-600"></i> Global Shield Controls
+          </h2>
+          <div class="space-y-3.5">
+            <!-- Global No-Escape Barrier -->
+            <div class="flex items-center justify-between pb-3 border-b border-sand">
+              <div class="pr-2">
+                <div class="text-xs font-semibold text-charcoal-800">Global "No-Escape" Barrier</div>
+                <div class="text-[10px] text-charcoal-400">Hard-blocks redirects when replying to DMs</div>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer flex-shrink-0">
+                <input checked="" class="sr-only toggle-checkbox" onchange="toggleSetting('No-Escape Barrier', this)"
+                  type="checkbox">
+                <div class="w-9 h-5 bg-gray-200 rounded-full toggle-bg transition-colors">
+                  <div
+                    class="w-4 h-4 bg-white rounded-full toggle-dot shadow-sm transform transition-transform translate-x-0.5 mt-[2px]">
+                  </div>
+                </div>
+              </label>
+            </div>
+            <!-- Smart Reels Access Cap -->
+            <div class="flex items-center justify-between pb-3 border-b border-sand">
+              <div class="pr-2">
+                <div class="text-xs font-semibold text-charcoal-800">Smart Reels Access Limit</div>
+                <div class="text-[10px] text-charcoal-400">Strict cap of 5 intentional reels per 24 hours</div>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer flex-shrink-0">
+                <input checked="" class="sr-only toggle-checkbox"
+                  onchange="toggleSetting('Smart Reels Access Limit', this)" type="checkbox">
+                <div class="w-9 h-5 bg-gray-200 rounded-full toggle-bg transition-colors">
+                  <div
+                    class="w-4 h-4 bg-white rounded-full toggle-dot shadow-sm transform transition-transform translate-x-0.5 mt-[2px]">
+                  </div>
+                </div>
+              </label>
+            </div>
+            <!-- Sanitization Sensitivity -->
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-xs font-semibold text-charcoal-800">AI Notification Sensitivity</span>
+                <span class="text-[10px] font-bold text-sage-600 bg-sage-50 px-2 py-0.5 rounded-full"
+                  id="sensitivity-label">Strict (Study Mode)</span>
+              </div>
+              <p class="text-[10px] text-charcoal-400 mb-2">Only direct 1:1 human questions pierce through notification
+                silence.</p>
+              <div class="grid grid-cols-3 gap-2">
+                <button
+                  class="sens-btn py-1.5 rounded-xl border border-sand bg-white text-[10px] font-medium text-charcoal-600 spring-press"
+                  onclick="setSensitivity('Gentle', this)">Gentle</button>
+                <button
+                  class="sens-btn py-1.5 rounded-xl border border-sand bg-white text-[10px] font-medium text-charcoal-600 spring-press"
+                  onclick="setSensitivity('Balanced', this)">Balanced</button>
+                <button
+                  class="sens-btn py-1.5 rounded-xl border border-sage-500 bg-sage-500 text-white font-semibold text-[10px] shadow-sm spring-press"
+                  onclick="setSensitivity('Strict (Study Mode)', this)">Strict</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Section 2: App-by-App Feed & Infinite Scroll Blocking Switches -->
+        <div class="bg-white rounded-3xl p-4 border border-sand shadow-cozy mb-4">
+          <h2 class="text-xs font-bold text-charcoal-800 mb-3 flex items-center gap-1.5">
+            <i class="ph-bold ph-sliders-horizontal text-sage-600"></i> App Feed Blocking Rules
+          </h2>
+          <p class="text-[10px] text-charcoal-400 mb-3">Toggled apps will have their algorithmic infinite feeds
+            completely suppressed.</p>
+          <div class="space-y-3">
+            <!-- Instagram Reels Lock -->
+            <div class="flex items-center justify-between pb-2.5 border-b border-sand">
+              <div class="flex items-center space-x-2.5">
+                <div
+                  class="w-7 h-7 rounded-lg bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 flex items-center justify-center text-white text-xs">
+                  <i class="ph-bold ph-instagram-logo"></i>
+                </div>
+                <div>
+                  <div class="text-xs font-semibold text-charcoal-800">Instagram Reels &amp; Explore</div>
+                  <div class="text-[10px] text-charcoal-400">Lock infinite tab, keep DMs safe</div>
+                </div>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input checked="" class="sr-only toggle-checkbox" onchange="toggleDistraction(this, 'Instagram Reels')"
+                  type="checkbox">
+                <div class="w-9 h-5 bg-gray-200 rounded-full toggle-bg transition-colors">
+                  <div
+                    class="w-4 h-4 bg-white rounded-full toggle-dot shadow-sm transform transition-transform translate-x-0.5 mt-[2px]">
+                  </div>
+                </div>
+              </label>
+            </div>
+            <!-- YouTube Shorts Lock -->
+            <div class="flex items-center justify-between pb-2.5 border-b border-sand">
+              <div class="flex items-center space-x-2.5">
+                <div class="w-7 h-7 rounded-lg bg-red-600 flex items-center justify-center text-white text-xs">
+                  <i class="ph-bold ph-youtube-logo"></i>
+                </div>
+                <div>
+                  <div class="text-xs font-semibold text-charcoal-800">YouTube Shorts Carousel</div>
+                  <div class="text-[10px] text-charcoal-400">Null addictive vertical loops</div>
+                </div>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input checked="" class="sr-only toggle-checkbox" onchange="toggleDistraction(this, 'YouTube Shorts')"
+                  type="checkbox">
+                <div class="w-9 h-5 bg-gray-200 rounded-full toggle-bg transition-colors">
+                  <div
+                    class="w-4 h-4 bg-white rounded-full toggle-dot shadow-sm transform transition-transform translate-x-0.5 mt-[2px]">
+                  </div>
+                </div>
+              </label>
+            </div>
+            <!-- Snapchat Spotlight Lock -->
+            <div class="flex items-center justify-between pb-2.5 border-b border-sand">
+              <div class="flex items-center space-x-2.5">
+                <div class="w-7 h-7 rounded-lg bg-amber-400 flex items-center justify-center text-charcoal-900 text-xs">
+                  <i class="ph-bold ph-snapchat-logo"></i>
+                </div>
+                <div>
+                  <div class="text-xs font-semibold text-charcoal-800">Snapchat Spotlight &amp; Stories</div>
+                  <div class="text-[10px] text-charcoal-400">Strip algorithmic discovery feed</div>
+                </div>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input checked="" class="sr-only toggle-checkbox"
+                  onchange="toggleDistraction(this, 'Snapchat Spotlight')" type="checkbox">
+                <div class="w-9 h-5 bg-gray-200 rounded-full toggle-bg transition-colors">
+                  <div
+                    class="w-4 h-4 bg-white rounded-full toggle-dot shadow-sm transform transition-transform translate-x-0.5 mt-[2px]">
+                  </div>
+                </div>
+              </label>
+            </div>
+            <!-- Facebook Infinite Feed Lock -->
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-2.5">
+                <div class="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center text-white text-xs">
+                  <i class="ph-bold ph-facebook-logo"></i>
+                </div>
+                <div>
+                  <div class="text-xs font-semibold text-charcoal-800">Facebook Infinite Newsfeed</div>
+                  <div class="text-[10px] text-charcoal-400">Redirect straight to groups</div>
+                </div>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input checked="" class="sr-only toggle-checkbox"
+                  onchange="toggleDistraction(this, 'Facebook Newsfeed')" type="checkbox">
+                <div class="w-9 h-5 bg-gray-200 rounded-full toggle-bg transition-colors">
+                  <div
+                    class="w-4 h-4 bg-white rounded-full toggle-dot shadow-sm transform transition-transform translate-x-0.5 mt-[2px]">
+                  </div>
+                </div>
+              </label>
+            </div>
+          </div>
+        </div>
+        <!-- Section 3: Reset & Data Controls -->
+        <div class="space-y-2">
+          <button
+            class="w-full py-2.5 rounded-2xl bg-amber-100 hover:bg-amber-200 text-amber-800 text-xs font-bold spring-press flex items-center justify-center gap-1.5 transition-colors"
+            onclick="resetReelBudget()">
+            <i class="ph-bold ph-arrows-clockwise text-sm"></i> Reset Today's Reel Counter (Demo)
+          </button>
+          <button
+            class="w-full py-2.5 rounded-2xl bg-white border border-sand text-charcoal-600 text-xs font-semibold spring-press"
+            onclick="triggerToast('Quarantine cache cleared')">
+            Clear Distraction Logs
+          </button>
+        </div>
+      </div>
+    </main>
+    <!-- ============================================== -->
+    <!-- GLOBAL BOTTOM NAVIGATION TABS -->
+    <!-- ============================================== -->
+    <nav
+      class="absolute bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-sand px-6 py-2.5 flex items-center justify-around z-40">
+      <!-- Tab 1: Dashboard -->
+      <button class="flex flex-col items-center space-y-1 text-sage-600 spring-press" id="nav-btn-dashboard"
+        onclick="navigateTo('screen-dashboard')">
+        <i class="ph-fill ph-squares-four text-xl"></i>
+        <span class="text-[10px] font-bold">Dashboard</span>
+      </button>
+      <!-- Tab 2: Focus Inbox -->
+      <button
+        class="flex flex-col items-center space-y-1 text-charcoal-400 hover:text-sage-600 transition-colors spring-press relative"
+        id="nav-btn-inbox" onclick="navigateTo('screen-inbox')"><i class="ph-bold ph-tray text-xl"></i><span
+          class="text-[10px] font-medium tracking-wide">INBOX</span><span
+          class="absolute -top-1 right-2 w-2 h-2 rounded-full bg-rose-500"></span></button>
+      <!-- Tab 3: Deep Lock Simulator -->
+
+      <!-- Tab 4: Settings (Dedicated Replacement for Profile) -->
+      <button
+        class="flex flex-col items-center space-y-1 text-charcoal-400 hover:text-sage-600 transition-colors spring-press"
+        id="nav-btn-settings" onclick="navigateTo('screen-settings')">
+        <i class="ph-bold ph-gear-six text-xl"></i>
+        <span class="text-[10px] font-medium">Settings</span>
+      </button>
+    </nav>
+    <!-- ============================================== -->
+    <!-- CUSTOMIZE ACTIVE APPS MODAL / DRAWER -->
+    <!-- ============================================== -->
+    <div class="hidden absolute inset-0 bg-charcoal-900/60 backdrop-blur-sm z-50 flex items-end justify-center"
+      id="app-selector-modal">
+      <div
+        class="bg-white w-full rounded-t-3xl p-5 shadow-2xl border-t border-sand max-h-[85%] overflow-y-auto no-scrollbar">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <h3 class="text-sm font-bold text-charcoal-800">Customize Active Apps</h3>
+            <p class="text-[10px] text-charcoal-400">Select which apps FocusFeed should sanitize on your dashboard</p>
+          </div>
+          <button class="w-8 h-8 rounded-full bg-sand flex items-center justify-center text-charcoal-800 spring-press"
+            onclick="closeAppSelectorModal()">
+            <i class="ph-bold ph-x text-sm"></i>
+          </button>
+        </div>
+        <!-- Selectable App List -->
+        <div class="space-y-2.5 my-3">
+          <!-- Instagram -->
+          <label
+            class="flex items-center justify-between p-3 rounded-2xl border border-sand hover:border-sage-300 bg-sand/30 cursor-pointer">
+            <div class="flex items-center space-x-3">
+              <div
+                class="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 flex items-center justify-center text-white">
+                <i class="ph-bold ph-instagram-logo text-base"></i>
+              </div>
+              <div>
+                <div class="text-xs font-bold text-charcoal-800">Instagram</div>
+                <div class="text-[10px] text-charcoal-400">Reels &amp; explore feeder</div>
+              </div>
+            </div>
+            <input checked="" class="app-select-cb rounded text-sage-600 focus:ring-sage-500 h-4 w-4"
+              data-app="instagram" type="checkbox">
+          </label>
+          <!-- YouTube -->
+          <label
+            class="flex items-center justify-between p-3 rounded-2xl border border-sand hover:border-sage-300 bg-sand/30 cursor-pointer">
+            <div class="flex items-center space-x-3">
+              <div class="w-9 h-9 rounded-xl bg-red-600 flex items-center justify-center text-white">
+                <i class="ph-bold ph-youtube-logo text-base"></i>
+              </div>
+              <div>
+                <div class="text-xs font-bold text-charcoal-800">YouTube</div>
+                <div class="text-[10px] text-charcoal-400">Shorts &amp; recommendations</div>
+              </div>
+            </div>
+            <input checked="" class="app-select-cb rounded text-sage-600 focus:ring-sage-500 h-4 w-4" data-app="youtube"
+              type="checkbox">
+          </label>
+          <!-- Snapchat -->
+          <label
+            class="flex items-center justify-between p-3 rounded-2xl border border-sand hover:border-sage-300 bg-sand/30 cursor-pointer">
+            <div class="flex items-center space-x-3">
+              <div class="w-9 h-9 rounded-xl bg-amber-400 flex items-center justify-center text-charcoal-900">
+                <i class="ph-bold ph-snapchat-logo text-base"></i>
+              </div>
+              <div>
+                <div class="text-xs font-bold text-charcoal-800">Snapchat</div>
+                <div class="text-[10px] text-charcoal-400">Spotlight &amp; stories</div>
+              </div>
+            </div>
+            <input checked="" class="app-select-cb rounded text-sage-600 focus:ring-sage-500 h-4 w-4"
+              data-app="snapchat" type="checkbox">
+          </label>
+          <!-- Facebook -->
+          <label
+            class="flex items-center justify-between p-3 rounded-2xl border border-sand hover:border-sage-300 bg-sand/30 cursor-pointer">
+            <div class="flex items-center space-x-3">
+              <div class="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white">
+                <i class="ph-bold ph-facebook-logo text-base"></i>
+              </div>
+              <div>
+                <div class="text-xs font-bold text-charcoal-800">Facebook</div>
+                <div class="text-[10px] text-charcoal-400">Newsfeed &amp; recommended reels</div>
+              </div>
+            </div>
+            <input checked="" class="app-select-cb rounded text-sage-600 focus:ring-sage-500 h-4 w-4"
+              data-app="facebook" type="checkbox">
+          </label>
+          <!-- WhatsApp -->
+          <label
+            class="flex items-center justify-between p-3 rounded-2xl border border-sand hover:border-sage-300 bg-sand/30 cursor-pointer">
+            <div class="flex items-center space-x-3">
+              <div class="w-9 h-9 rounded-xl bg-emerald-500 flex items-center justify-center text-white">
+                <i class="ph-bold ph-whatsapp-logo text-base"></i>
+              </div>
+              <div>
+                <div class="text-xs font-bold text-charcoal-800">WhatsApp</div>
+                <div class="text-[10px] text-charcoal-400">Status tab quarantine</div>
+              </div>
+            </div>
+            <input class="app-select-cb rounded text-sage-600 focus:ring-sage-500 h-4 w-4" data-app="whatsapp"
+              type="checkbox">
+          </label>
+          <!-- X / Twitter -->
+          <label
+            class="flex items-center justify-between p-3 rounded-2xl border border-sand hover:border-sage-300 bg-sand/30 cursor-pointer">
+            <div class="flex items-center space-x-3">
+              <div class="w-9 h-9 rounded-xl bg-charcoal-900 flex items-center justify-center text-white">
+                <i class="ph-bold ph-x-logo text-base"></i>
+              </div>
+              <div>
+                <div class="text-xs font-bold text-charcoal-800">X / Twitter</div>
+                <div class="text-[10px] text-charcoal-400">"For You" timeline block</div>
+              </div>
+            </div>
+            <input class="app-select-cb rounded text-sage-600 focus:ring-sage-500 h-4 w-4" data-app="x" type="checkbox">
+          </label>
+          <!-- Reddit -->
+          <label
+            class="flex items-center justify-between p-3 rounded-2xl border border-sand hover:border-sage-300 bg-sand/30 cursor-pointer">
+            <div class="flex items-center space-x-3">
+              <div class="w-9 h-9 rounded-xl bg-orange-600 flex items-center justify-center text-white">
+                <i class="ph-bold ph-reddit-logo text-base"></i>
+              </div>
+              <div>
+                <div class="text-xs font-bold text-charcoal-800">Reddit</div>
+                <div class="text-[10px] text-charcoal-400">Popular &amp; video feed isolation</div>
+              </div>
+            </div>
+            <input class="app-select-cb rounded text-sage-600 focus:ring-sage-500 h-4 w-4" data-app="reddit"
+              type="checkbox">
+          </label>
+        </div>
+        <button class="w-full py-2.5 rounded-2xl bg-sage-500 text-white text-xs font-bold spring-press shadow-cozy"
+          onclick="applyAppSelections()">
+          Save Dashboard Selection
+        </button>
+      </div>
+    </div>
+    <!-- ============================================== -->
+    <!-- AVATAR EVOLUTION SYSTEM MODAL -->
+    <!-- ============================================== -->
+    <div class="hidden absolute inset-0 bg-charcoal-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-5"
+      id="avatar-modal">
+      <div class="bg-white rounded-3xl p-5 text-center max-w-[340px] w-full shadow-2xl border border-sand">
+        <div
+          class="w-20 h-20 rounded-3xl bg-amber-100 border-2 border-amber-300 flex items-center justify-center mx-auto mb-3 shadow-inner relative">
+          <span class="text-4xl">🧘‍♂️</span>
+          <span
+            class="absolute -bottom-2 px-2 py-0.5 bg-sage-500 text-white rounded-full text-[9px] font-bold shadow-sm">Level
+            3</span>
+        </div>
+        <h3 class="text-base font-bold text-charcoal-800">Deep Worker</h3>
+        <p class="text-xs text-sage-600 font-medium mt-0.5">High Focus Frequency</p>
+        <p class="text-xs text-charcoal-600 mt-2 leading-relaxed">
+          You evolved through mindful restraint. You are currently <strong>75%</strong> toward unlocking the ultimate
+          tier.
+        </p>
+        <!-- Progress to next tier -->
+        <div class="my-3.5 bg-sand/60 rounded-2xl p-3 text-left">
+          <div class="flex items-center justify-between text-[11px] font-semibold mb-1">
+            <span class="text-charcoal-800">Next: Attention Master</span>
+            <span class="text-sage-600 font-bold">3/4 Goals</span>
+          </div>
+          <div class="w-full bg-sand rounded-full h-2 overflow-hidden mb-2">
+            <div class="bg-gradient-to-r from-sage-500 to-amber-500 h-2 rounded-full" style="width: 75%"></div>
+          </div>
+          <div class="text-[10px] text-charcoal-400">Dodged 84 algorithmic traps today</div>
+        </div>
+        <!-- Evolution Stages Breakdown -->
+        <div class="space-y-1.5 text-left mb-4 text-[11px]">
+          <div class="flex items-center justify-between p-2 rounded-xl bg-sand/30">
+            <span class="text-charcoal-400 flex items-center gap-2"><span class="">🌀</span> Lv 1: Distracted
+              Human</span>
+            <span class="text-charcoal-400 text-[10px]">Passed</span>
+          </div>
+          <div class="flex items-center justify-between p-2 rounded-xl bg-sand/30">
+            <span class="text-charcoal-400 flex items-center gap-2"><span class="">🌱</span> Lv 2: Focused
+              Learner</span>
+            <span class="text-charcoal-400 text-[10px]">Passed</span>
+          </div>
+          <div
+            class="flex items-center justify-between p-2 rounded-xl bg-sage-100/60 font-semibold border border-sage-200">
+            <span class="text-sage-700 flex items-center gap-2"><span class="">🧘‍♂️</span> Lv 3: Deep Worker</span>
+            <span class="text-sage-700 text-[10px] font-bold">Current</span>
+          </div>
+          <div class="flex items-center justify-between p-2 rounded-xl bg-sand/30">
+            <span class="text-charcoal-400 flex items-center gap-2"><span class="">⚡</span> Lv 4: Attention
+              Master</span>
+            <span class="text-amber-600 text-[10px] font-bold">Locked</span>
+          </div>
+        </div>
+        <button class="w-full py-2.5 rounded-2xl bg-charcoal-800 text-white text-xs font-bold spring-press"
+          onclick="closeAvatarModal()">
+          Close Evolution View
+        </button>
+      </div>
+    </div>
+    <!-- ============================================== -->
+    <!-- 🔥 SMART REELS LIMIT EXCEEDED MODAL -->
+    <!-- ============================================== -->
+    <div class="hidden absolute inset-0 bg-charcoal-900/65 backdrop-blur-sm z-50 flex items-center justify-center p-6"
+      id="reel-limit-modal">
+      <div class="bg-white rounded-3xl p-6 text-center max-w-[320px] shadow-2xl border-2 border-amber-400">
+        <div class="w-14 h-14 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center mx-auto mb-3">
+          <i class="ph-fill ph-hand-palm text-3xl"></i>
+        </div>
+        <h3 class="text-base font-bold text-charcoal-800">Reel Limit Reached</h3>
+        <p class="text-xs text-charcoal-600 mt-2 leading-relaxed">
+          Take a breath. Your <strong>5 daily reels</strong> are complete for today. Back to Deep Work.
+        </p>
+        <div class="bg-amber-50 rounded-2xl p-2.5 mt-3 border border-amber-200 text-[11px] text-amber-800 font-medium">
+          🌱 Daily Reel Budget: 5 / 5 used. Algorithmic loops will unlock tomorrow at 6:00 AM.
+        </div>
+        <button class="mt-4 w-full py-2.5 rounded-2xl bg-sage-500 text-white text-xs font-bold shadow-cozy spring-press"
+          onclick="closeReelLimitModal()">
+          Back to Deep Work
+        </button>
+      </div>
+    </div>
+    <!-- ============================================== -->
+    <!-- NO-ESCAPE BARRIER POPUP MODAL (Simulated Breach) -->
+    <!-- ============================================== -->
+    <div class="hidden absolute inset-0 bg-charcoal-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-6"
+      id="barrier-modal">
+      <div class="bg-white rounded-3xl p-6 text-center max-w-[320px] shadow-2xl border-2 border-amber-500">
+        <div class="w-14 h-14 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center mx-auto mb-3">
+          <i class="ph-fill ph-hand-palm text-3xl"></i>
+        </div>
+        <h3 class="text-base font-bold text-charcoal-800">No-Escape Barrier Enforced</h3>
+        <p class="text-xs text-charcoal-600 mt-2 leading-relaxed">
+          FocusFeed AI blocked an attempt to switch back to the Instagram Reels &amp; Explore feed.
+        </p>
+        <div class="bg-amber-50 rounded-2xl p-2.5 mt-3 border border-amber-200 text-[11px] text-amber-800 font-medium">
+          🛡️ Your intention was to reply to this chat only. Feed remains sealed.
+        </div>
+        <button class="mt-4 w-full py-2.5 rounded-2xl bg-sage-500 text-white text-xs font-bold shadow-cozy spring-press"
+          onclick="closeBarrierModal()">
+          Got it, Stay Focused
+        </button>
+      </div>
+    </div>
+    <!-- Interactive Toast Notification -->
+    <div
+      class="absolute top-12 inset-x-6 z-50 bg-charcoal-800 text-white px-4 py-2.5 rounded-2xl shadow-xl flex items-center space-x-2.5 transition-all duration-300 transform -translate-y-20 opacity-0 pointer-events-none"
+      id="toast-pill">
+      <i class="ph-fill ph-check-circle text-sage-500 text-base" id="toast-icon"></i>
+      <span class="text-xs font-medium" id="toast-text">Action executed</span>
+    </div>
+  </div>
+  <!-- Interactive Logic & State Scripts -->
+  <script>
+    // Live Clock Update
+    function updateClock() {
+      const now = new Date();
+      let hours = now.getHours();
+      let minutes = now.getMinutes();
+      minutes = minutes < 10 ? '0' + minutes : minutes;
+      hours = hours < 10 ? '0' + hours : hours;
+      const clockEl = document.getElementById('status-clock');
+      if (clockEl) clockEl.textContent = `${hours}:${minutes}`;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Reel Budget State
+    let reelBudgetUsed = 3;
+    const MAX_REELS = 5;
+
+    function updateReelBudgetUI() {
+      const counterBadge = document.getElementById('budget-counter-badge');
+      const chatIndicator = document.getElementById('chat-budget-indicator');
+      if (counterBadge) counterBadge.textContent = `${reelBudgetUsed} of ${MAX_REELS} used`;
+      if (chatIndicator) chatIndicator.textContent = `${reelBudgetUsed}/${MAX_REELS} Used`;
+
+      const slot4 = document.getElementById('slot-4');
+      const slot5 = document.getElementById('slot-5');
+      if (slot4) {
+        slot4.className = reelBudgetUsed >= 4 ? 'flex-1 h-2 rounded-full bg-amber-500' : 'flex-1 h-2 rounded-full bg-amber-200';
+      }
+      if (slot5) {
+        slot5.className = reelBudgetUsed >= 5 ? 'flex-1 h-2 rounded-full bg-amber-500' : 'flex-1 h-2 rounded-full bg-amber-200';
+      }
+    }
+
+    function consumeReelBudget() {
+      if (reelBudgetUsed >= MAX_REELS) {
+        const modal = document.getElementById('reel-limit-modal');
+        modal.classList.remove('hidden');
+        return;
+      }
+
+      reelBudgetUsed++;
+      updateReelBudgetUI();
+
+      if (reelBudgetUsed === MAX_REELS) {
+        triggerToast(`5th reel watched. Daily Reel Budget complete!`);
+        setTimeout(() => {
+          document.getElementById('reel-limit-modal').classList.remove('hidden');
+        }, 600);
+      } else {
+        triggerToast(`Watched Reel ${reelBudgetUsed} of ${MAX_REELS}. Sandboxed.`);
+      }
+    }
+
+    function playSandboxedReel() {
+      if (reelBudgetUsed >= MAX_REELS) {
+        document.getElementById('reel-limit-modal').classList.remove('hidden');
+        return;
+      }
+      consumeReelBudget();
+    }
+
+    function closeReelLimitModal() {
+      document.getElementById('reel-limit-modal').classList.add('hidden');
+    }
+
+    function resetReelBudget() {
+      reelBudgetUsed = 0;
+      updateReelBudgetUI();
+      triggerToast('Reel budget refreshed: 0/5 used today');
+    }
+
+    // View Navigation Handler (Dashboard, Inbox, Chat Lock, Settings)
+    function navigateTo(screenId) {
+      const screens = ['screen-dashboard', 'screen-inbox', 'screen-chat-lock', 'screen-settings'];
+      screens.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          if (id === screenId) {
+            el.classList.remove('hidden');
+          } else {
+            el.classList.add('hidden');
+          }
+        }
+      });
+
+      // Update Nav Tabs Styling
+      const navMap = {
+        'screen-dashboard': 'nav-btn-dashboard',
+        'screen-inbox': 'nav-btn-inbox',
+        'screen-chat-lock': 'nav-btn-lock',
+        'screen-settings': 'nav-btn-settings'
+      };
+
+      ['nav-btn-dashboard', 'nav-btn-inbox', 'nav-btn-lock', 'nav-btn-settings'].forEach(btnId => {
+        const btn = document.getElementById(btnId);
+        if (btn) {
+          const icon = btn.querySelector('i');
+          const label = btn.querySelector('span');
+          if (btnId === navMap[screenId]) {
+            btn.className = 'flex flex-col items-center space-y-1 text-sage-600 spring-press';
+            if (icon) {
+              icon.classList.remove('ph-bold');
+              icon.classList.add('ph-fill');
+            }
+            if (label) {
+              label.classList.add('font-bold');
+              label.classList.remove('font-medium');
+            }
+          } else {
+            btn.className = 'flex flex-col items-center space-y-1 text-charcoal-400 hover:text-sage-600 transition-colors spring-press';
+            if (icon) {
+              icon.classList.remove('ph-fill');
+              icon.classList.add('ph-bold');
+            }
+            if (label) {
+              label.classList.remove('font-bold');
+              label.classList.add('font-medium');
+            }
+          }
+        }
+      });
+    }
+
+    // Deep-Link to Specific Chat with "No-Escape" parameters
+    function openDeepLinkChat(name, message, tag, time, avatarText) {
+      document.getElementById('chat-sender-name').textContent = name;
+      document.getElementById('chat-sender-avatar').textContent = avatarText.slice(0, 2);
+      document.getElementById('chat-mini-avatar').textContent = avatarText.slice(0, 2);
+      document.getElementById('chat-message-body').textContent = message;
+      document.getElementById('chat-sender-status').textContent = `Tag: ${tag} • Sandboxed Direct Thread`;
+
+      document.getElementById('dynamic-replies').innerHTML = '';
+      updateReelBudgetUI();
+
+      navigateTo('screen-chat-lock');
+      triggerToast(`Focused on chat with ${name}. Explore Feed Locked.`);
+    }
+
+    // Attempt Escape to Feed Simulation
+    function attemptEscapeToFeed() {
+      const modal = document.getElementById('barrier-modal');
+      modal.classList.remove('hidden');
+    }
+
+    function closeBarrierModal() {
+      document.getElementById('barrier-modal').classList.add('hidden');
+    }
+
+    // Avatar Evolution Modal
+    function openAvatarModal() {
+      document.getElementById('avatar-modal').classList.remove('hidden');
+    }
+
+    function closeAvatarModal() {
+      document.getElementById('avatar-modal').classList.add('hidden');
+    }
+
+    // App Customization Selector Modal
+    function openAppSelectorModal() {
+      document.getElementById('app-selector-modal').classList.remove('hidden');
+    }
+
+    function closeAppSelectorModal() {
+      document.getElementById('app-selector-modal').classList.add('hidden');
+    }
+
+    function applyAppSelections() {
+      const checkboxes = document.querySelectorAll('.app-select-cb');
+      let activeCount = 0;
+      checkboxes.forEach(cb => {
+        const appId = cb.getAttribute('data-app');
+        const card = document.querySelector(`.app-feed-card[data-app-id="${appId}"]`);
+        if (card) {
+          if (cb.checked) {
+            card.style.display = 'block';
+            activeCount++;
+          } else {
+            card.style.display = 'none';
+          }
+        } else if (cb.checked) {
+          activeCount++;
+        }
+      });
+
+      const countBadge = document.getElementById('active-app-count');
+      if (countBadge) countBadge.textContent = `${activeCount} active`;
+
+      closeAppSelectorModal();
+      triggerToast(`Dashboard updated with ${activeCount} active platforms.`);
+    }
+
+    // Toast Notification Utility
+    let toastTimeout;
+    function triggerToast(message) {
+      const toast = document.getElementById('toast-pill');
+      const text = document.getElementById('toast-text');
+      text.textContent = message;
+
+      toast.classList.remove('-translate-y-20', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('-translate-y-20', 'opacity-0');
+      }, 2600);
+    }
+
+    // Distraction Blocker Toggle Handler in Settings
+    function toggleDistraction(checkbox, appName) {
+      if (checkbox.checked) {
+        triggerToast(`${appName}: Lock ACTIVE. Feeds quarantined.`);
+      } else {
+        triggerToast(`Warning: ${appName} feeds unblocked.`);
+      }
+    }
+
+    function toggleSetting(name, cb) {
+      triggerToast(`${name}: ${cb.checked ? 'Enabled' : 'Disabled'}`);
+    }
+
+    function setSensitivity(level, btn) {
+      document.querySelectorAll('.sens-btn').forEach(b => {
+        b.className = 'sens-btn py-1.5 rounded-xl border border-sand bg-white text-[10px] font-medium text-charcoal-600 spring-press';
+      });
+      btn.className = 'sens-btn py-1.5 rounded-xl border border-sage-500 bg-sage-500 text-white font-semibold text-[10px] shadow-sm spring-press';
+      document.getElementById('sensitivity-label').textContent = level;
+      triggerToast(`AI Notification filter set to ${level}`);
+    }
+
+    // Filter Chips for Inbox
+    function setStreamFilter(category, btn) {
+      document.querySelectorAll('.filter-chip').forEach(el => {
+        el.className = 'filter-chip px-3 py-1 rounded-full text-[11px] font-medium bg-white text-charcoal-600 border border-sand';
+      });
+      btn.className = 'filter-chip px-3 py-1 rounded-full text-[11px] font-semibold bg-sage-500 text-white shadow-sm';
+
+      const cards = document.querySelectorAll('.inbox-card');
+      let visibleCount = 0;
+      cards.forEach(card => {
+        if (category === 'all' || card.getAttribute('data-category') === category) {
+          card.style.display = 'block';
+          visibleCount++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      const emptyEl = document.getElementById('inbox-empty-state');
+      if (visibleCount === 0) {
+        emptyEl.classList.remove('hidden');
+        emptyEl.classList.add('flex');
+      } else {
+        emptyEl.classList.add('hidden');
+        emptyEl.classList.remove('flex');
+      }
+    }
+
+    // Chat Sending Interactions
+    function handleSendMessage(e) {
+      e.preventDefault();
+      const input = document.getElementById('chat-input');
+      const msg = input.value.trim();
+      if (!msg) return;
+
+      appendUserBubble(msg);
+      input.value = '';
+    }
+
+    function sendQuickReply(text) {
+      appendUserBubble(text);
+    }
+
+    function appendUserBubble(text) {
+      const container = document.getElementById('dynamic-replies');
+      const bubble = document.createElement('div');
+      bubble.className = 'flex items-end justify-end space-x-2 ml-auto max-w-[85%] pt-2';
+      bubble.innerHTML = `
+        <div class="bg-sage-500 text-white rounded-3xl rounded-tr-sm p-3.5 shadow-cozy text-xs leading-relaxed">
+          ${text}
+        </div>
+      `;
+      container.appendChild(bubble);
+
+      const area = document.getElementById('chat-conversation-area');
+      area.scrollTop = area.scrollHeight;
+
+      triggerToast('Message sent directly. Feed remained sealed.');
+    }
+
+    // Initial setup
+    updateReelBudgetUI();
+  </script>
+
+
+</body>
+
+</html>
